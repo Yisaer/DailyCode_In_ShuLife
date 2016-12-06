@@ -71,15 +71,14 @@ public:
                  */
                 if(cur->getCoef()+refNoimal->getCoef() == 0){
                     pre->setPtr(cur->getPtr());
-                    refNoimal->DeleteSelf();
-                    cur->DeleteSelf();
+
                 }
                 else{
                     /*
                      * 系数和非0
                      */
                     cur->setCoef(cur->getCoef()+refNoimal->getCoef());
-                    refNoimal->DeleteSelf();
+
                 }
 
             }
@@ -95,8 +94,11 @@ public:
 
     void TransPrint(){
         for(Noimal* cur = head ; cur !=NULL ; cur = cur->getPtr()){
-            cout<<"Coef = "<<(cur->getCoef())<<" Expo = "<<(cur->getExpo())<<endl;
-        }
+            if(cur !=head) cout<<"+";
+            cout<<(cur->getCoef());
+            if(cur->getExpo()!=0)
+                cout<<"x^"<<(cur->getExpo());
+        }   cout<<endl;
     }
     void setHead(Noimal* head){
         this->head = head;
