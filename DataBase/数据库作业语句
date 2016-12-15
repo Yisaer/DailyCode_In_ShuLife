@@ -55,11 +55,11 @@ not exists(select xh from E E2 where E2.kh = E1.kh and E2.zpcj > E1.zpcj ) ORDER
 
   ) group by xh order by csrq
 
+查询每门课的排名，输出课程号，学号，总评成绩，排名；按课程号升序，课程相同按排名从高到低。
+（提示：某个同学一门课的排名就是该门课成绩大于等于他的人数）
 
 
- select s1.xh,s1.xm from S s1 where UNIX_TIMESTAMP() - UNIX_TIMESTAMP(csrq) 
-  <
-  (select avg(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(CSRQ)) FROM S s2 where s1.yxh=s2.yxh )
-
+select E1.xq ,E1.xh ,E1.kh,E1.zpcj, Select Count(xh) from E E2 where E1.kh=E2.kh and E1.xq=E2.xq and E2.zpcj>=E1.zpcj) from E E1 where E1.zpcj is not NULL Order by E1.xq ASC,E1.kh ASC ,(
+Select Count(xh) from E E2 where E1.kh=E2.kh and E1.xq=E2.xq and E2.zpcj>=E1.zpcj) ASC
 
 
