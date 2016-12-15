@@ -1,0 +1,65 @@
+
+
+;1 查询2011年进校年龄大于20岁的男学生的学号与姓名。
+select xh,xm from S where xh like "11%%" AND  DATE_FORMAT(csrq,'%Y') <=  1996 AND xb = '男';
+;2 检索刘晓明不学的课程的课程号。
+select distinct  kh from E where kh NOT IN ( SELECT kh FROM S,E WHERE S.xh = E.xh AND S.xm ='刘晓明');
+
+;3 检索马小红老师所授课程的学年，学期，课程号，上课时间。
+ select xq,kh,sksj from T,O WHERE T.gh = O.gh AND T.xm = '马小红';
+
+;4 查询计算机学院男生总评成绩及格、教授开设的课程的课程号、课名、开课教师姓名，按开课教师升序，课程号降序排序。
+  SELECT E.kh,C.km,T.xm FROM E,T,C  where E.gh = T.gh AND E.kh = C.kh And E.zpcj >=60 And E.xh IN
+
+  (select xh from D,S where D.yxh = S.yxh AND D.mc = '计算机学院' And S.xb = '男') ORDER BY 3 ASC ,1 DESC 
+
+;5 检索学号比张颖同学大，年龄比张颖同学小的同学学号、姓名。
+
+ SELECT xh, xm FROM S WHERE xh > (select xh from S where xm = '张颖') and csrq > (Select csrq from S where xm = '张颖' );
+
+ ;6
+ SELECT distinct S.xh ,S.xm FROM S,E e ,E f where S.xh = e.xh And e.xh = f.xh And e.kh = '08305001' and f.kh = '08305002' 
+
+ ；查询每个学生选课情况（包括没有选修课程的学生）。
+ select S.xh,S.xm,E.xq,E.kh,E.gh  from S left join E on S.xh = E.xh;
+
+ ;检索所有课程都选修的的学生的学号与姓名
+select xh ,xm from S where not exists (select * from C where not exists(select * from E where E.xh = S.xh and E.kh = C.kh));
+
+;检索选修课程包含1106同学所学全部课程的学生学号和姓名。
+select distinct xh from E Ex
+where not exists
+(
+  select * from E Ey
+  where Ey.xh='1106' and not exists
+(
+  select * from E Ez
+  where Ez.xh=Ex.xh and Ey.kh=Ez.kh
+)
+);
+
+;查询每门课程中分数最高的学生学号和学生姓名。
+Select S.xh ,xm,E1.kh from S ,E E1 where S.xh = E1.xh and 
+not exists(select xh from E E2 where E2.kh = E1.kh and E2.zpcj > E1.zpcj ) ORDER by E1.kh;
+
+;查询年龄小于本学院平均年龄，所有课程总评成绩都高于所选课程平均总评成绩的学生学号、姓名和平均总评成绩，按年龄排序。
+
+  select S1.xh,S1.xm, avg(zpcj) from S S1,E E3 where S1.xh = E3.xh and
+  UNIX_TIMESTAMP() - UNIX_TIMESTAMP(csrq) 
+  < 
+  (select avg(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(csrq)) from S S2 where S1.yxh = S2.yxh ) 
+
+  AND NOT exists ( Select * from E E1 where E1.xh = s1.xh AND E1.zpcj <= 
+
+  (Select avg(zpcj) from E E2 where E2.kh = E1.kh group by  kh)
+
+  ) group by xh order by csrq
+
+
+
+ select s1.xh,s1.xm from S s1 where UNIX_TIMESTAMP() - UNIX_TIMESTAMP(csrq) 
+  <
+  (select avg(UNIX_TIMESTAMP()-UNIX_TIMESTAMP(CSRQ)) FROM S s2 where s1.yxh=s2.yxh )
+
+
+
