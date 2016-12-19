@@ -59,7 +59,10 @@ not exists(select xh from E E2 where E2.kh = E1.kh and E2.zpcj > E1.zpcj ) ORDER
 （提示：某个同学一门课的排名就是该门课成绩大于等于他的人数）
 
 
-select E1.xq ,E1.xh ,E1.kh,E1.zpcj, Select Count(xh) from E E2 where E1.kh=E2.kh and E1.xq=E2.xq and E2.zpcj>=E1.zpcj) from E E1 where E1.zpcj is not NULL Order by E1.xq ASC,E1.kh ASC ,(
+select E1.xq as 学期,E1.xh as 学号,E1.kh as 学号,E1.zpcj as 总评成绩, 
+(Select Count(xh) from E E2 where E1.kh=E2.kh and E1.xq=E2.xq and E2.zpcj>=E1.zpcj) 
+as 排名 
+from E E1 where E1.zpcj is not NULL Order by E1.xq ASC,E1.kh ASC ,(
 Select Count(xh) from E E2 where E1.kh=E2.kh and E1.xq=E2.xq and E2.zpcj>=E1.zpcj) ASC
 
 
