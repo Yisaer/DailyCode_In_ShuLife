@@ -55,8 +55,8 @@ not exists(select xh from E E2 where E2.kh = E1.kh and E2.zpcj > E1.zpcj ) ORDER
 
   ) group by xh order by csrq
 
-查询每门课的排名，输出课程号，学号，总评成绩，排名；按课程号升序，课程相同按排名从高到低。
-（提示：某个同学一门课的排名就是该门课成绩大于等于他的人数）
+;查询每门课的排名，输出课程号，学号，总评成绩，排名；按课程号升序，课程相同按排名从高到低。
+;(提示：某个同学一门课的排名就是该门课成绩大于等于他的人数)
 
 
 select E1.xq as 学期,E1.xh as 学号,E1.kh as 学号,E1.zpcj as 总评成绩, 
@@ -66,3 +66,24 @@ from E E1 where E1.zpcj is not NULL Order by E1.xq ASC,E1.kh ASC ,(
 Select Count(xh) from E E2 where E1.kh=E2.kh and E1.xq=E2.xq and E2.zpcj>=E1.zpcj) ASC
 
 
+;建立计算机学院总评不及格成绩学生的视图，包括学生学号、姓名、性别、手机、所选课程和成绩。
+Create view Student_Fail(xh,xm,xb,sjhm,kc,zpcj) AS Select distinct S.xh,S.xm,S.xb,S.sjhm,E.kh,E.zpcj
+from S,E where S.xh = E.xh And E.zpcj <60
+
+;在E表中插入记录，把每个学生没学过的课程都插入到E表中，使得每个学生都选修每门课。
+insert into E select  distinct  S.xh,O.xq,O.kh,O.gh,NULL,NULL,NULL from S,O where 
+O.kh not in (Select E.kh from E where S.xh = E.xh )
+
+;求年龄大于所有女同学年龄的男学生姓名和年龄。
+Select xm,DATE_FORMAT( current_timestamp(),'%Y' )-Date_Format(csrq,'%Y') as 年龄 
+from S where xb='男' and csrq < (Select Min(csrq) from S S2 where S2.xb = '女');
+
+;在E表中修改08305001课程的平时成绩，若成绩小于等于75分时提高5%，若成绩大于75分时提高4%。
+Update E set pscj =pscj *1.04 where kh = '08305001' And pscj>75;
+Update E set pscj =pscj *1.05 where kh = '08305001' And pscj<=75;
+
+;删除没有开课的学院。
+Delete from D where D.yxh  not in (Select distinct C.yxh from C);
+
+;查询优、良、中、及格、不及格学生人数
+Select Count(Select from E )
