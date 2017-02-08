@@ -22,6 +22,7 @@ public class IntLock implements  Runnable{
 
                 }
                 lock2.lockInterruptibly();
+                System.out.println(this.lock +" get ");
             }
             else{
                 lock2.lockInterruptibly();
