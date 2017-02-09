@@ -19,6 +19,8 @@ public class Main {
             try {
                 cyclicBarrier.await();
                 doWork();
+                cyclicBarrier.await();
+                
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (BrokenBarrierException e) {
