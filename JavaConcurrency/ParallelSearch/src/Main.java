@@ -36,7 +36,6 @@ public class Main {
             this.searchValue = searchValue;
         }
 
-
         @Override
         public Integer call() throws Exception {
             int re = search(searchValue,begin,end);
@@ -76,7 +75,5 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-
     }
 }
