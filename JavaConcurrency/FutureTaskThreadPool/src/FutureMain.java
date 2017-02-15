@@ -13,10 +13,12 @@ public class FutureMain {
 
         try {
             Thread.sleep(2000);
+            System.out.println(futureTask.isDone());
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         System.out.println("数据 = " + futureTask.get());
+        System.out.println(futureTask.isDone());
     }
 }
