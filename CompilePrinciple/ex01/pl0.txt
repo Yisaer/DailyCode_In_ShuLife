@@ -1,0 +1,5 @@
+Var  ab = 1;world;
+Const b ,c=4;
+Var e,  fg ,  cdf ;
+Var 3a4;
+Var Aqq = ab + b + c;

@@ -17,7 +17,6 @@ struct File {
 struct UserFile{
     int fileCount ;
     File file[12];
-
 }AFD[12];
 
 
@@ -45,7 +44,6 @@ bool Creat(int User){
 
 
 int main() {
-
     string usr;
     cin>>usr;
     int curUser = -1;
@@ -91,7 +89,5 @@ int main() {
         cout<<AFD[curUser].file[i].fileName<<endl;
     }
     cout<<"Good bye"<<endl;
-
-
     return 0;
 }

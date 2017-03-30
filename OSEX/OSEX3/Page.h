@@ -19,7 +19,6 @@ public:
         this->PageLen = pagelen;
         this->PageAddressBegin = pageaddressbegin;
     }
-
 };
 
 #endif //OSEX3_PAGE_H
