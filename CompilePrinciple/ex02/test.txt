@@ -1,9 +1,10 @@
 
 
-const a = 10;
+const 123a <=> 10;
 var b,c;
 begin
-    read ( b ) ;
-    c:=a+b;
-    write(c);
+ read(b);
+ if(a>=b) then
+   c:=b+a;
+ write(c);
 end.

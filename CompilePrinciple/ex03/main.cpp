@@ -6,6 +6,7 @@ using namespace std;
 #include <string>
 #include <map>
 #include "help.h"
+#include "CIFA.h"
 #define FILEPATH "test.txt"
 #define TOKENPATH "Mapper.txt"
 #define TABSIZE 10
@@ -18,7 +19,6 @@ char *rwtab[TABSIZE] = {
 };
 
 map<int ,string> Mapper;
-
 
 
 void scaner(){
@@ -162,15 +162,22 @@ int main() {
 
     A:
     p = 0;
+    bool isFalse = false;
     do {
         scaner();
 //        cout<<"syn = "<<syn<<endl;
+        synNum[cnt] = syn;
+        cnt++;
         switch(syn){
             case 11: cout<<"("<<Mapper[11]<<" "<<sum<<")"<<endl;break;
-            case -1: cout<<" Error  "<<endl; break;
+            case -1: cout<<" Error  "<<endl; isFalse = true;break;
             default: cout<<"("<<Mapper[syn]<<" "<<token<<")"<<endl;break;
         }
-    }while(syn!=0);
-
+    }while(syn!=0 && prog[p] != 0);
+    if(isFalse == true){
+        return 0;
+    }
     return 0;
 }
+
+

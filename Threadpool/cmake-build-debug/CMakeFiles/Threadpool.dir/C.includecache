@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/Threadpool/dbg.h
+stdio.h
+-
+errno.h
+-
+string.h
+-
+stdlib.h
+-
+
+/Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/Threadpool/main.c
+threadpool.h
+/Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/Threadpool/threadpool.h
+
+/Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/Threadpool/threadpool.c
+threadpool.h
+/Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/Threadpool/threadpool.h
+
+/Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/Threadpool/threadpool.h
+stdlib.h
+-
+unistd.h
+-
+pthread.h
+-
+stdint.h
+-
+dbg.h
+/Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/Threadpool/dbg.h
+
