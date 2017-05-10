@@ -36,7 +36,7 @@ static void *threadpool_worker(void *arg){
             continue;
         }
         pool->head->next = task->next;
-        pool->queue_size;
+        pool->queue_size--;
         pthread_mutex_unlock(&(pool->lock));
         (*(task->func))(task->arg);
         //TODO memory pool
@@ -67,10 +67,7 @@ Y_threadpool_t *threadpool_init(int thread_num){
     if ((pool->threads == NULL) || (pool->head == NULL)) {
         goto err;
     }
-    err:
-    if (pool) {
-        threadpool_free(pool);
-    }
+
     pool->head->func = NULL;
     pool->head->arg = NULL;
     pool->head->next = NULL;
@@ -97,6 +94,10 @@ Y_threadpool_t *threadpool_init(int thread_num){
     }
 
     return pool;
+err:
+    if (pool) {
+        threadpool_free(pool);
+    }
     return NULL;
 }
 

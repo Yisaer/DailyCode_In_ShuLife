@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.7)
-project(Threadpool)
+cmake_minimum_required (VERSION 2.6)
+project (zaver)
 
-set(CMAKE_C_STANDARD 11)
+file(GLOB SOURCES "*.c")
+set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-g -O2 -Wall -Werror -Wextra -pthread -DNDEBUG")
+add_executable(zaver ${SOURCES})
 
-set(SOURCE_FILES main.c dbg.h threadpool.c threadpool.h)
-set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-g -O2 -Wall -Wextra -pthread -DNDEBUG")
-add_executable(Threadpool ${SOURCE_FILES})
