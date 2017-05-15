@@ -137,6 +137,100 @@ void accept_request(int client){
     close(client);
 }
 
+/**********************************************************************/
+/* Inform the client that a request it has made has a problem.
+ * Parameters: client socket */
+/**********************************************************************/
+void bad_request(int client)
+{
+    char buf[1024];
+
+    /*回应客户端错误的 HTTP 请求 */
+    sprintf(buf, "HTTP/1.0 400 BAD REQUEST\r\n");
+    send(client, buf, sizeof(buf), 0);
+    sprintf(buf, "Content-type: text/html\r\n");
+    send(client, buf, sizeof(buf), 0);
+    sprintf(buf, "\r\n");
+    send(client, buf, sizeof(buf), 0);
+    sprintf(buf, "<P>Your browser sent a bad request, ");
+    send(client, buf, sizeof(buf), 0);
+    sprintf(buf, "such as a POST without a Content-Length.\r\n");
+    send(client, buf, sizeof(buf), 0);
+}
+
+/*
+ * cat函数将目标文件的所有内容写入目标socketID中去
+ */
+void cat(int client , FILE *resource){
+    char buf[1024];
+    /*
+     *  读取文件中的所有数据写到socket
+     */
+    fgets(buf,sizeof(buf),resource);
+    while(!feof(resource)){
+        send(client,buf,strlen(buf),0);
+        fgets(buf,sizeof(buf),resource);
+    }
+}
+
+/*
+ *  通知客户端无法解析CGI程序
+ */
+void cannot_execute(int client)
+{
+    char buf[1024];
+
+    /* 回应客户端 cgi 无法执行*/
+    sprintf(buf, "HTTP/1.0 500 Internal Server Error\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "Content-type: text/html\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "<P>Error prohibited CGI execution.\r\n");
+    send(client, buf, strlen(buf), 0);
+}
+
+
+void error_die(const char *sc)
+{
+    /*出错信息处理 */
+    perror(sc);
+    exit(1);
+}
+
+
+int get_line(int sock,char * buf , int size){
+    int i = 0;
+    char c = '\0';
+    int n ;
+    /*
+     * 终止条件为\n换行符
+     */
+    while( (i < size -1 ) && (c != '\n')){
+        n = recv(sock,&c,1,0);
+        if( n > 0 ){
+            /*
+             * 收到\r 则继续接受下个字节
+             * 因为换行符可能为\r\n
+             */
+            n = recv(sock,&c,1,MSG_PEEK);
+            if( (n >0 ) && ( c == '\n')){
+                recv(sock,&c ,1,0);
+            }
+            else{
+                c = '\n';
+            }
+        }
+        else{
+            c = '\n';
+        }
+    }
+    buf[i] = '\0';
+    return i;
+}
+
+
 void execute_cgi(int client,const char * path ,const char *  method ,const char * query_string){
     char buf[1024];
     int cgi_output[2];
