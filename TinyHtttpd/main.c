@@ -5,7 +5,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <tkDecls.h>
 #include <ctype.h>
 #include <stdlib.h>
 
@@ -230,6 +229,78 @@ int get_line(int sock,char * buf , int size){
     return i;
 }
 
+void headers(int client , const char * filename){
+    char buf[1024];
+    (void) filename;
+    strcpy(buf ,"HTTP/1.0 200 OK\r\n");
+    send(client,buf,strlen(buf),0);
+    /*
+     * 服务器信息
+     */
+    strcpy(buf,SERVER_STRING);
+    send(client,buf,strlen(buf),0);
+    sprintf(buf,"Content-Type: text/html\r\n");
+    send(client,buf,strlen(buf),0);
+    strcpy(buf,"\r\n");
+    send(client,buf,strlen(buf),0);
+}
+
+void not_found(int client){
+    char buf[1024];
+    /*
+     * 404页面
+     */
+    sprintf(buf,"HTTP/1.0 404 NOT FOUND\r\n");
+    /*服务器信息*/
+    sprintf(buf, SERVER_STRING);
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "Content-Type: text/html\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "<HTML><TITLE>Not Found</TITLE>\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "<BODY><P>The server could not fulfill\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "your request because the resource specified\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "is unavailable or nonexistent.\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "</BODY></HTML>\r\n");
+    send(client, buf, strlen(buf), 0);
+}
+/*
+ * 通过首部发送一个常规文件给客户端，当发生错误时报告
+ */
+void serve_file(int client,const char * filename){
+    FILE* resource = NULL;
+    int numchars = 1;
+    char buf[1024];
+    /*
+     * 读取并丢弃Header
+     */
+    buf[0] = 'A';buf[1]= '\0';
+    while( (numchars >0 ) && strcmp("\n",buf)){
+        numchars = get_line(client,buf,sizeof(buf));
+    }
+    /*
+     * 打开sever的文件
+     */
+    resource = fopen(filename,"r");
+    if(resource == NULL ){
+        not_found(client);
+    }
+    else{
+        /*
+         * 写HTTP header 复制文件
+         */
+        headers(client,filename);
+        cat(client,resource);
+    }
+    fclose(resource);
+
+}
+
 
 void execute_cgi(int client,const char * path ,const char *  method ,const char * query_string){
     char buf[1024];
@@ -401,7 +472,30 @@ int startup(u_short * port){
      */
     return httpd;
 }
-
+/*
+ * 通知客户端请求未能执行
+ */
+void unimplemented(int client){
+    char buf[1024];
+    /* HTTP method 不被支持*/
+    sprintf(buf, "HTTP/1.0 501 Method Not Implemented\r\n");
+    send(client, buf, strlen(buf), 0);
+    /*服务器信息*/
+    sprintf(buf, SERVER_STRING);
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "Content-Type: text/html\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "<HTML><HEAD><TITLE>Method Not Implemented\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "</TITLE></HEAD>\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "<BODY><P>HTTP request method not supported.\r\n");
+    send(client, buf, strlen(buf), 0);
+    sprintf(buf, "</BODY></HTML>\r\n");
+    send(client, buf, strlen(buf), 0);
+}
 
 int main() {
     int server_sock = -1;
