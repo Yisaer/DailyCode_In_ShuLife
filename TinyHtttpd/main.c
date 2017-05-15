@@ -7,12 +7,13 @@
 #include <sys/stat.h>
 #include <tkDecls.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #define ISspace(x) isspace((int)(x))
 #define SERVER_STRING "Server: httpd/0.1.0\r\n"
 
 void accept_request(int);       // 处理套接字监听到的一个HTTP请求
-void back_request(int);         // 返回给客户端这是个错误的请求
+void bad_request(int);         // 返回给客户端这是个错误的请求
 void cat(int ,FILE *);          // 读取某个文件到套接字
 void cannot_execute(int);       // 执行cgi程序错误
 void error_die(const char *);   // 处理错误信息写到perror
@@ -135,6 +136,138 @@ void accept_request(int client){
     }
     close(client);
 }
+
+void execute_cgi(int client,const char * path ,const char *  method ,const char * query_string){
+    char buf[1024];
+    int cgi_output[2];
+    int cgi_input[2];
+    pid_t pid;
+    int status ;
+    int i ;
+    char c;
+    int numchars = 1;
+    int content_length;
+    buf[0] = 'A';buf[1] = '\0';
+    if(strcasecmp(method,"GET")==0){
+        /*
+         * 丢弃所有HTTP header
+         */
+        while( (numchars > 0 )  && strcmp ("\n",buf)){
+            numchars = get_line(client,buf , sizeof(buf));
+        }
+    }
+    else{
+        /*
+         * 对POST的HTTP请求中找出content_length
+         */
+        numchars = get_line(client,buf,sizeof(buf));
+        while( (numchars >0) && strcmp("\n",buf) ){
+            /*
+             * 利用\0进行分割
+             */
+            buf[15] = '\0';
+            /*
+             * HTTP请求的特点
+             */
+            if(strcasecmp(buf,"Content-Length:")==0){
+                content_length = atoi(&(buf[16]));
+            }
+            numchars = get_line(client,buf,sizeof(buf));
+        }
+        /*
+         * 没有找到content_length
+         */
+        if(content_length == -1){
+            bad_request(client);
+            return ;
+        }
+    }
+    /*
+     * 正确。状态码200
+     */
+    sprintf(buf,"HTTP/1.0 200 OK\r\n");
+    send(client,buf,strlen(buf),0);
+
+    if(pipe(cgi_output) <0){
+        cannot_execute(client);
+        return;
+    }
+    if(pipe(cgi_input) <0){
+        cannot_execute(client);
+        return;
+    }
+    if( (pid = fork()) <0){
+        /*
+         * 错误处理
+         */
+        cannot_execute(client);
+        return ;
+    }
+    /*
+     * child : CGI script
+     */
+    if( pid == 0){
+        char meth_env[255];
+        char query_env[255];
+        char length_env[255];
+        /*
+         * 把标准输出重定向到cgi_output的写入段
+         */
+        dup2(cgi_output[1],1);
+        /*
+         * 把标准输入重定向到cgi_input的读取端
+         */
+        dup2(cgi_input[0],0);
+        /*
+         * 关闭cgi_input的写入
+         * 关闭cgi_output的读取端
+         */
+        close(cgi_output[0]);
+        close(cgi_input[1]);
+        /*
+         * 设置request_method的环境变量
+         */
+        sprintf(meth_env,"REQUEST_METHOD=%s",method);
+        putenv(meth_env);
+        if(strcasecmp(method,"GET") == 0){
+            /*
+             * 设置 query_string的环境变量
+             */
+            sprintf(query_env,"QUERY_STRING=%s",query_string);
+            putenv(query_env);
+        }
+        else{
+            /*
+             * 设置content_length的环境变量
+             */
+            sprintf(length_env,"CONTENT_LENGTH=%d",content_length);
+            putenv(length_env);
+        }
+        execl(path,path,NULL);
+        exit(0);
+    }
+    else{
+        close(cgi_output[1]);
+        close(cgi_input[0]);
+        if(strcasecmp(method,"POST") == 0){
+            /*
+             * 接受POST过来的数据
+             */
+            for(i = 0; i<content_length;i++){
+                recv(client,&c,1,0);
+                write(cgi_input[1],&c,1);
+            }
+        }
+        while(read(cgi_output[0],&c,1) >0 ){
+            send(client,&c,1,0);
+        }
+        close(cgi_output[0]);
+        close(cgi_input[1]);
+
+        waitpid(pid,&status,0);
+    }
+}
+
 
 /*
  * startup函数用来初始化Web连接
