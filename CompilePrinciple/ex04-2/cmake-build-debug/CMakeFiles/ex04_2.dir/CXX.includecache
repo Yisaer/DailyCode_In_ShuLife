@@ -7,26 +7,12 @@
 #IncludeRegexTransform: 
 
 /Users/Yisa/Desktop/github/DailyCodeInShuLife/DailyCode_In_ShuLife/CompilePrinciple/ex04-2/main.cpp
-iostream
+stdio.h
 -
-cstring
+string.h
 -
-cstdio
+stdlib.h
 -
-vector
--
-stack
--
-map
--
-set
--
-algorithm
--
-string
--
-cstdlib
--
-cctype
+math.h
 -
 
