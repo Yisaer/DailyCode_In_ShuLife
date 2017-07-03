@@ -7,6 +7,7 @@ using namespace std;
 using namespace std;
 #define maxn 5005
 char s[maxn];
+stack<char> s1;
 
 LL num[maxn];
 char sig[maxn];
@@ -80,7 +81,6 @@ LL solve(int l,int r){
     int curn=0;
     for(int i=l;i<=r;i++){
         if(isdigit(s[i])){
-            printf("i = %d\n",i);
             curn=curn*10+s[i]-'0';
         }
         else {
@@ -103,11 +103,44 @@ LL solve(int l,int r){
     }
     if(s[r]!=')') num[++nn]=curn;
     while(nn>1) cal();
+
     return num[1];
 }
 
 int main(){
     while(~scanf("%s",s)){
+        while(!s1.empty()){
+            s1.pop();
+        }
+        bool isLegal = true;
+        for(int  i =0 ;i<strlen(s);i++) {
+//            printf("i = %d\n",i);
+            if(!s1.empty()){
+//                printf("c = %c \n",s1.top());
+            }
+            if (s[i] == '(') {
+                s1.push(s[i]);
+            }
+            if(s[i] == ')'){
+                if(s1.empty()){
+                    isLegal = false;
+                    break;
+                }
+                if(s1.top() == '('){
+                    s1.pop();
+                }
+                else{
+                    isLegal = false;
+                    break;
+                }
+
+            }
+        }
+        if( isLegal == false || !s1.empty()){
+            printf("error\n");
+            continue;
+        }
+
         cout<<solve(0,strlen(s)-1)<<endl;
     }
     return 0;
