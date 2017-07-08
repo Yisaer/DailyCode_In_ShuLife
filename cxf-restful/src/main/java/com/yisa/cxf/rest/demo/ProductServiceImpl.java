@@ -3,6 +3,8 @@ package com.yisa.cxf.rest.demo;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -47,11 +49,13 @@ public class ProductServiceImpl implements ProductService {
         return targetProductList;
     }
 
-    public Product createProduct(Product product) {
+    public String createProduct(String json) {
+        Gson gson = new Gson();
+        Product product = gson.fromJson(json,Product.class);
         productList.add(product);
-        System.out.println(product);
-        return product;
+        return product.getName();
     }
+
 
     public Product updateProductById(long id, Map<String, Object> fieldMap) {
         Product product = retrieveProductById(id);

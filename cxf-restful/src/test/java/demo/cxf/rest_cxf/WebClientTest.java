@@ -1,5 +1,6 @@
 package demo.cxf.rest_cxf;
 
+import com.google.gson.Gson;
 import com.yisa.cxf.rest.demo.JSONUtil;
 import com.yisa.cxf.rest.demo.Product;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -39,13 +40,11 @@ public class WebClientTest {
     @Test
     public void productPostJson(){
         Product product = new Product(3,"Test",1000);
-        Object res = WebClient.create(baseAddress)
-                .path("/products")
-                .accept(MediaType.APPLICATION_JSON)
-                .type(MediaType.APPLICATION_JSON)
-                .post(product,Product.class);
-        System.out.println(JSONUtil.toJSON(res));
-
+        WebClient client = WebClient.create(baseAddress).path("/product");
+        Gson gson = new Gson();
+        String str = client.accept(MediaType.TEXT_PLAIN).type(MediaType.TEXT_PLAIN)
+                .post(gson.toJson(product),String.class);
+        System.out.println(str);
     }
 
     @Test
@@ -55,5 +54,6 @@ public class WebClientTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .delete();
     }
+
 }
 
