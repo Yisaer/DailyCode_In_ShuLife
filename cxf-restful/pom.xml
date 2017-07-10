@@ -14,9 +14,16 @@
         <junit.version>4.11</junit.version>
         <cxf.version>3.0.0</cxf.version>
         <jackson.version>1.9.13</jackson.version>
+        <spring.version>4.0.6.RELEASE</spring.version>
     </properties>
 
     <dependencies>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
         <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>

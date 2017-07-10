@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:core="http://cxf.apache.org/core"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.1.xsd
+		http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+		http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+	<jaxws:endpoint id="restsamplesoap" implementor="com.yisa.person.ws.RESTSampleSoap"
+		address="/restsamplesoap">
+		<jaxws:features>
+			<bean class="org.apache.cxf.feature.LoggingFeature" />
+		</jaxws:features>
+	</jaxws:endpoint>
+
+	<!-- 这里的地址很重要，客户端需要通过这个地址来访问WebService -->
+	<bean id="restSample" class="com.yisa.person.rest.RESTSampleSource"/>
+	<util:map id="jsonNamespaceMap" map-class="java.util.Hashtable">
+        <entry key="http://services.institute.com" value=""/>
+        <entry key="http://cxf.apache.org/bindings/xformat" value="cxf"/>
+    </util:map>
+	<bean id="jsonInputFactory" class="org.codehaus.jettison.mapped.MappedXMLInputFactory">
+        <constructor-arg ref="jsonNamespaceMap"/>
+    </bean>
+    <bean id="jsonOutputFactory" class="org.codehaus.jettison.mapped.MappedXMLOutputFactory">
+        <constructor-arg ref="jsonNamespaceMap"/>
+    </bean>
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider"/>
+	<jaxrs:server id="restServiceContainer" address="/rest">
+		<jaxrs:serviceBeans>
+			<ref bean="restSample" />
+		</jaxrs:serviceBeans>
+		<jaxrs:extensionMappings>
+			<entry key="json" value="application/json" />
+			<entry key="xml" value="application/xml" />
+		</jaxrs:extensionMappings>
+		
+		<jaxrs:providers>         
+            <ref bean="jsonProvider"/>     
+        </jaxrs:providers>
+	</jaxrs:server>
+</beans>

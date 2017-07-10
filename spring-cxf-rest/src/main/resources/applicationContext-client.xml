@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 第一种方式：WebClient -->
+	<bean id="webClient" class="org.apache.cxf.jaxrs.client.WebClient"
+		factory-method="create">
+		<constructor-arg type="java.lang.String"
+			value="http://localhost:8080/training-cxf-rest-spring/services/rest/" />
+	</bean>
+	<!-- 第二种方式：JAXRSClientFactory -->
+	<bean id="restSampleBean" class="org.apache.cxf.jaxrs.client.JAXRSClientFactory"
+		factory-method="create">
+		<constructor-arg type="java.lang.String"
+			value="http://localhost:8080/training-cxf-rest-spring/services/rest/" />
+		<constructor-arg type="java.lang.Class" value="com.yisa.person.api.RESTSample" />
+	</bean>
+
+</beans>
