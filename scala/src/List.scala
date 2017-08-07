@@ -133,6 +133,8 @@ object List {
   def appendViaLeft[A](l: List[A] , r:List[A]):List[A] =
     foldLeft(l,r)((r,lt) => Cons(lt,r))
 
+  def concat[A](l:List[List[A]]):List[A] =
+    foldRight(l,Nil:List[A])(append)
 
   def apply[A] (as : A*) : List[A] =
     if (as.isEmpty) Nil
