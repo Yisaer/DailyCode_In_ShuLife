@@ -109,6 +109,18 @@ object List {
   def length[A] (as: List[A]):Int =
     foldRight(as ,0)((_,y) => y+1)
 
+  def foldLeft[A,B] (as :List[A], z:B) (f: (B,A) => B ) :B  = as match {
+    case Nil => z
+    case Cons(h,t) => foldLeft(t,f(z,h))(f)
+  }
+
+  def sumleft (l: List[Int]) = foldLeft(l,0)((B,A)=> B + A)
+  def productLeft(list :List[Int]) = foldLeft(list,0)((B,A) => B+A )
+  def lengthLeft(list:List[Int])  = foldLeft(list,0)( (B,_ ) => B+1)
+
+  
+
+
   def apply[A] (as : A*) : List[A] =
     if (as.isEmpty) Nil
     else Cons(as.head,apply(as.tail: _*))

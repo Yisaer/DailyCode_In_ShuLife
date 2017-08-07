@@ -14,5 +14,8 @@ object ListTest {
     val list :List[Int] = List(1,2,3,4,5)
     val size :Int = List.length(list)
     println("size = " + size)
+    val len2 = List.lengthLeft(List(1,2,3,4,5))
+    println("size left = " + len2 )
+
   }
 }
