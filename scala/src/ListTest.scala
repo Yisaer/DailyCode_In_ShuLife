@@ -17,5 +17,12 @@ object ListTest {
     val len2 = List.lengthLeft(List(1,2,3,4,5))
     println("size left = " + len2 )
 
+    val list1 = List(1,2,3,4)
+    val list2 = List(5,6,7,8)
+    val res:List[Int] = List.appendViaLeft(list1,list2)
+    List.PrintList(res)
+    val res2:List[Int] = List.appendViaRigt(list1,list2)
+    List.PrintList(res2)
+
   }
 }

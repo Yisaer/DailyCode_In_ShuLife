@@ -118,7 +118,20 @@ object List {
   def productLeft(list :List[Int]) = foldLeft(list,0)((B,A) => B+A )
   def lengthLeft(list:List[Int])  = foldLeft(list,0)( (B,_ ) => B+1)
 
-  
+  def reverse[A](list :List[A]): List[A] =
+    foldLeft(list, List[A]())((acc,h) => Cons(h,acc))
+
+  def foldRight2[A,B](as:List[A],acc :B )(f : (A,B)=>B ):B =
+    foldLeft(reverse(as), acc)((B,_) =>B)
+
+//  def foldLeftViafoldRigt[A,B](l:List[A] ,acc :B )(f: (A,B)=>B):B =
+//    foldRight(l,(b:B) => b )((g,a) => b => g(f(a,b)))(acc)
+
+  def appendViaRigt[A](l:List[A] , r : List[A]):List[A] =
+    foldRight(l,r)((lt,r) =>Cons(lt,r))
+
+  def appendViaLeft[A](l: List[A] , r:List[A]):List[A] =
+    foldLeft(l,r)((r,lt) => Cons(lt,r))
 
 
   def apply[A] (as : A*) : List[A] =
