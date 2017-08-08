@@ -24,5 +24,10 @@ object ListTest {
     val res2:List[Int] = List.appendViaRigt(list1,list2)
     List.PrintList(res2)
 
+    println("sup sub")
+    val a1 = List(1,2,3,4,5)
+    val a2 = List(2,5)
+    val isSub = List.hasSubsequence(a1,a2)
+    println(isSub)
   }
 }

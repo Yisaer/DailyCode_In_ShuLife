@@ -141,4 +141,28 @@ object List {
     else Cons(as.head,apply(as.tail: _*))
 
 
+  def addList(l1:List[Int],l2:List[Int]):List[Int] = (l1,l2) match {
+    case (Nil ,_ ) => Nil
+    case (_,Nil ) => Nil
+    case (Cons(h1,t1) ,Cons(h2,t2)) => Cons(h1+h2 , addList(t1,t2))
+  }
+
+  def zipWith[A,B,C] (a:List[A] ,b:List[B])(f: (A,B) => C ): List[C] = (a,b) match {
+    case (Nil,_) => Nil
+    case (_,Nil) => Nil
+    case (Cons(h1,t1) ,Cons(h2,t2) ) => Cons(f(h1,h2) ,zipWith(t1,t2)(f))
+  }
+
+  def hasSubsequence[A](sup:List[A],sub:List[A] ) :Boolean = (sup,sub ) match {
+    case (Nil ,_ ) => false
+    case (_ ,Nil) => true
+    case ( Cons(h1,t1) ,Cons(h2,t2) ) =>
+      if(h1 == h2 )
+        hasSubsequence(t1,t2)
+      else
+        hasSubsequence(t1,Cons(h2,t2))
+  }
+
+
+
 }
