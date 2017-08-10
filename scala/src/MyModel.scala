@@ -83,6 +83,16 @@ object MyModel {
 
   def test(a:Int,b:Int):Int = compose(f,g)(a)
 
+
+  def failingFn(i:Int) :Int = {
+    val y:Int = throw new Exception("fail!")
+    try{
+      val x = 42+5
+      x+y
+    }catch{ case e: Exception => 43
+    }
+  }
+
   def main(args: Array[String]): Unit = {
 
 
@@ -117,5 +127,6 @@ object MyModel {
     List.PrintList(list1)
     val x = List.setHead(list1,1)
     List.PrintList(x)
+    failingFn(12)
   }
 }
