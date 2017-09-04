@@ -42,6 +42,11 @@ sealed trait Stream[+A]{
     case Cons(_,t) if n > 0 => t().drop(n-1)
     case _ => this
   }
+
+//  def takeWhile(p: A => Boolean ) : Stream[A] = this match {
+//    case Cons(h,t) if p(h)  => cons(h(),t().takeWhile(p))
+//    case Cons(h,_) if !p(h) => cons(h(),empty)
+//  }
 }
 case object Empty extends Stream [Nothing]
 case class Cons[+A] (h: () => A , t: () => Stream[A] ) extends  Stream[A]
@@ -59,4 +64,9 @@ object Stream {
 
   def apply[A] ( as:  A* ) : Stream[A] =
     if( as.isEmpty) empty else cons(as.head , apply(as.tail : _*))
+
+  def main(args: Array[String]): Unit = {
+    val s = Stream(1,2,3).take(2).toList
+
+  }
 }
